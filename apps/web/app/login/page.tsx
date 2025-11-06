@@ -22,12 +22,14 @@ function errorMessage(code?: string) {
   }
 }
 
-export default function LoginPage({
+// searchParams は Promise なので await する
+export default async function LoginPage({
   searchParams,
 }: {
-  searchParams?: { [k: string]: string | string[] | undefined };
+  searchParams?: Promise<{ [k: string]: string | string[] | undefined }>;
 }) {
-  const err = Array.isArray(searchParams?.error) ? searchParams?.error[0] : searchParams?.error;
+  const sp = await searchParams;
+  const err = Array.isArray(sp?.error) ? sp!.error[0] : sp?.error;
   const msg = errorMessage(err);
 
   return (
