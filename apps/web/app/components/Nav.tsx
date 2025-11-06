@@ -1,21 +1,18 @@
 'use client';
-'use client';
 import Link from 'next/link';
-import { useSession, signOut } from 'next-auth/react';
+import { useSession } from 'next-auth/react';
+import { usePathname } from 'next/navigation';
 
 export default function Nav() {
   const { data: s } = useSession();
+  const pathname = usePathname();
+
   return (
-    <nav className="flex gap-4 p-3 border-b">
+    <nav className="h-14 flex items-center gap-4 px-4 border-b bg-white/80 backdrop-blur">
       <Link href="/">Home</Link>
       <Link href="/protected">Protected</Link>
-      <span className="ml-auto" />
-      {s ? (
-        <button className="border rounded px-2 py-1" onClick={() => signOut()}>
-          Sign out
-        </button>
-      ) : (
-        <Link href="/login">Sign in</Link>
+      {!pathname?.startsWith('/login') && (
+        <span className="ml-auto text-sm text-slate-600">{s?.user?.email ?? 'Sign in'}</span>
       )}
     </nav>
   );

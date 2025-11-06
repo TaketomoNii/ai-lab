@@ -5,6 +5,7 @@ import Link from 'next/link';
 export default function LoginForm() {
   const [email, setEmail] = useState('');
   const [pw, setPw] = useState('');
+  const [showPw, setShowPw] = useState(false);
   const [remember, setRemember] = useState(false);
   const [errors, setErrors] = useState<{ email?: string; pw?: string }>({});
   const [submitting, setSubmitting] = useState(false);
@@ -44,16 +45,16 @@ export default function LoginForm() {
         🐙 GitHubでログイン
       </Link>
 
-      <div className="relative py-1 text-center text-xs text-white/80">
+      <div className="relative my-3 text-center text-xs text-white/80">
         <span className="bg-[linear-gradient(135deg,#667eea_0%,#764ba2_100%)] px-2">または</span>
-        <div className="absolute left-0 top-1/2 h-px w-full -translate-y-1/2 bg-white/30" />
+        <div className="absolute left-0 top-1/2 h-px w-full -translate-y-1/2 bg-white/20" />
       </div>
 
       {/* --- メール＋パスワード --- */}
       <form
         onSubmit={onSubmit}
         noValidate
-        className="space-y-4 rounded-2xl border border-white/30 bg-white/90 p-6 shadow-sm backdrop-blur"
+        className="space-y-4 rounded-2xl border border-white/30 backdrop-blur bg-white/95 p-6 shadow-md backdrop-blur"
       >
         <div className="space-y-1">
           <label htmlFor="email" className="block text-sm font-medium text-slate-800">
@@ -87,7 +88,7 @@ export default function LoginForm() {
           <input
             id="password"
             name="password"
-            type="password"
+            type={showPw ? 'text' : 'password'}
             autoComplete="current-password"
             required
             value={pw}
@@ -97,6 +98,16 @@ export default function LoginForm() {
             className="block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900 shadow-sm outline-none ring-0 focus:border-slate-400 focus:ring-2 focus:ring-slate-200"
             placeholder="••••••••"
           />
+          <div className="text-right">
+            <button
+              type="button"
+              onClick={() => setShowPw((prev) => !prev)}
+              className="text-xs text-slate-600 underline underline-offset-2 hover:text-slate-800"
+              aria-pressed={showPw}
+            >
+              パスワードを表示/非表示
+            </button>
+          </div>
           {errors.pw && (
             <p id="pw-error" className="text-sm text-red-600">
               {errors.pw}
