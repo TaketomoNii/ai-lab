@@ -1,1 +1,1 @@
-const lintStageTest:any=1
+const x: any = 1
