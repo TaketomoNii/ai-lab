@@ -6,8 +6,8 @@ if [ -f "$(dirname -- "$0")/_/husky.sh" ]; then
   . "$(dirname -- "$0")/_/husky.sh"
 fi
 
-# apps/web でフォーマット（失敗しても続行）
+# apps/web で整形（失敗しても続行）
 npm -C "$(git rev-parse --show-toplevel)/apps/web" run -s format || true
 
-# ステージ済み TS/TSX に ESLint+Prettier
-npx --yes -C "$(git rev-parse --show-toplevel)/apps/web" lint-staged
+# ★ lint-staged の作業ディレクトリを apps/web に固定
+npx --yes lint-staged --cwd "$(git rev-parse --show-toplevel)/apps/web"

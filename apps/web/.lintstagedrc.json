@@ -1,3 +1,6 @@
 {
-  "**/*.{ts,tsx}": ["eslint --fix", "prettier -w"]
+  "**/*.{ts,tsx}": [
+    "eslint --fix",
+    "npx --yes prettier -w --ignore-unknown"
+  ]
 }
