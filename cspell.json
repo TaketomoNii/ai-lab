@@ -1,0 +1,15 @@
+{
+  "version": "0.2",
+  "language": "en,ja",
+  "words": [
+    "NextAuth",
+    "Vercel",
+    "monorepo",
+    "ASJ",
+    "Codex"
+  ],
+  "ignorePaths": [
+    "**/.next/**",
+    "**/node_modules/**"
+  ]
+}

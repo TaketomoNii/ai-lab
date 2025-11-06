@@ -1,0 +1,63 @@
+{
+  "React Function Component (rfc)": {
+    "prefix": "rfc",
+    "body": [
+      "import React from 'react';",
+      "",
+      "type Props = {",
+      "  title?: string;",
+      "};",
+      "",
+      "export default function ${1:Component}({ title }: Props) {",
+      "  return (",
+      "    <div className=\"p-4 rounded-2xl shadow\">",
+      "      <h2 className=\"text-xl font-semibold\">{title ?? '${1:Component}'}</h2>",
+      "    </div>",
+      "  );",
+      "}",
+      ""
+    ],
+    "description": "Minimal RFC with Tailwind card"
+  },
+  "Async Handler (ahndl)": {
+    "prefix": "ahndl",
+    "body": [
+      "export const ${1:handler} = async (...args: unknown[]) => {",
+      "  try {",
+      "    // TODO: implement",
+      "  } catch (err) {",
+      "    console.error('[${1:handler}]', err);",
+      "    throw err;",
+      "  }",
+      "};"
+    ],
+    "description": "Async handler with error guard"
+  },
+  "Zustand Store (zust)": {
+    "prefix": "zust",
+    "body": [
+      "import { create } from 'zustand';",
+      "",
+      "type State = {",
+      "  count: number;",
+      "  inc: () => void;",
+      "};",
+      "",
+      "export const useCounter = create<State>((set) => ({",
+      "  count: 0,",
+      "  inc: () => set((s) => ({ count: s.count + 1 })),",
+      "}));"
+    ],
+    "description": "Tiny Zustand store"
+  },
+  "Tailwind Card (twcard)": {
+    "prefix": "twcard",
+    "body": [
+      "<div className=\"rounded-2xl border p-4 shadow-sm bg-white\">",
+      "  <div className=\"text-sm text-gray-500\">${1:label}</div>",
+      "  <div className=\"text-2xl font-bold\">${2:value}</div>",
+      "</div>"
+    ],
+    "description": "Simple Tailwind card block"
+  }
+}
