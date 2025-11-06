@@ -1,21 +1,20 @@
-"use client";
-import { signIn } from "next-auth/react";
-import { useSearchParams } from "next/navigation";
+import LoginForm from './LoginForm';
 
-export default function Login() {
-  const params = useSearchParams();
-  const err = params.get("error");
+export default function LoginPage() {
   return (
-    <main className="min-h-screen grid place-items-center">
-      <div className="p-8 rounded-xl shadow w-full max-w-sm border space-y-4">
-        <h1 className="text-xl font-semibold">Sign in</h1>
-        {err && <div className="text-sm text-red-600">Error: {err}</div>}
-        <button
-          className="w-full p-3 rounded border"
-          onClick={() => signIn("github", { callbackUrl: "/protected" })}
-        >
-          Continue with GitHub
-        </button>
+    <main className="min-h-dvh bg-[linear-gradient(135deg,#667eea_0%,#764ba2_100%)] p-6">
+      <div className="mx-auto flex max-w-7xl items-center justify-center">
+        <div className="w-full max-w-md">
+          <div className="mb-6 text-center">
+            <div aria-hidden className="mx-auto mb-2 h-12 w-12 rounded-xl bg-white/90 shadow-sm">
+              🏢
+            </div>
+            <h1 className="text-lg font-semibold text-white drop-shadow">
+              クラウド人事・給与 管理システム
+            </h1>
+          </div>
+          <LoginForm />
+        </div>
       </div>
     </main>
   );
