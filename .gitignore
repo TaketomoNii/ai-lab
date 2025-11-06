@@ -1,0 +1,13 @@
+node_modules/
+.next/
+out/
+.vercel/
+__pycache__/
+.venv/
+dist/
+build/
+.env
+.env.*
+!.env.example
+.DS_Store
+*.code-workspace
