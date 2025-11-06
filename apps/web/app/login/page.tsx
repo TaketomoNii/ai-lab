@@ -1,11 +1,37 @@
 import LoginForm from './LoginForm';
+import Alert from '../components/Alert';
 
 export const metadata = { title: 'ログイン | AI Web Service' };
 
-export default function LoginPage() {
+function errorMessage(code?: string) {
+  switch (code) {
+    case 'OAuthSignin':
+    case 'OAuthCallback':
+    case 'Callback':
+      return 'GitHub でのサインインに失敗しました。時間をおいて再度お試しください。';
+    case 'OAuthAccountNotLinked':
+      return '別のサインイン方法で登録済みの可能性があります。以前と同じ方法でお試しください。';
+    case 'EmailCreateAccount':
+      return 'メールリンクの作成に失敗しました。メールアドレスをご確認ください。';
+    case 'SessionRequired':
+      return 'このページにはログインが必要です。';
+    case 'auth':
+      return '認証が必要です。ログインしてください。';
+    default:
+      return code ? 'サインイン中にエラーが発生しました。' : undefined;
+  }
+}
+
+export default function LoginPage({
+  searchParams,
+}: {
+  searchParams?: { [k: string]: string | string[] | undefined };
+}) {
+  const err = Array.isArray(searchParams?.error) ? searchParams?.error[0] : searchParams?.error;
+  const msg = errorMessage(err);
+
   return (
     <main className="min-h-dvh bg-[linear-gradient(135deg,#667eea_0%,#764ba2_100%)] px-6">
-      {/* ヘッダー高さ h-14 = 3.5rem を差し引いた高さで縦横センター */}
       <div className="mx-auto grid min-h-[calc(100dvh-3.5rem)] max-w-7xl place-items-center">
         <div className="w-full max-w-md text-center">
           <div className="mb-6">
@@ -17,6 +43,10 @@ export default function LoginPage() {
             </div>
             <h1 className="text-xl font-semibold text-white drop-shadow">AI Web Service</h1>
           </div>
+
+          {/* エラーがあれば表示 */}
+          {msg && <Alert kind="error" title={msg} />}
+
           <LoginForm />
         </div>
       </div>
