@@ -1,0 +1,11 @@
+# Do
+- Keep diffs minimal and focused.
+- Work only under /apps/web/app and /apps/web/src unless explicitly asked.
+
+# Don’t
+- Do not touch: .env*, node_modules, .next, dist, .vercel, work-local/.
+- Do not mass-rename or mass-delete without explicit instruction.
+
+# Notes
+- For ESLint/Prettier, use apps/web config only.
+- Use WSL terminal; avoid PowerShell.
