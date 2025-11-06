@@ -1,0 +1,30 @@
+# Cursor Rules for ASJ AI Lab
+
+## General
+- 変更は小さく・レビュー可能な粒度で。大規模改修は段階提案。
+- シェルコマンド実行前は必ず確認を求めること。
+- 秘密/ローカル専用ファイルは読まない・書き換えない: `.env*`, `work-local/`, `.vercel/`
+- 大容量生成物は解析対象外: `node_modules/`, `.next/`, `dist/`
+
+## Tech Stack & Policy
+- Next.js 16 (App Router) / TypeScript / Tailwind
+- ESLint (flat config) + Prettier を順守
+- `middleware.ts` は原則使わない（必要時のみ明示的に指示）
+
+## Project Layout
+- Monorepo。主要アプリは `apps/web`
+- `apps/web` の npm scripts を使う: `npm run dev|lint|build`
+
+## Code Style
+- 関数型 React コンポーネント、アクセシビリティ配慮（label/role/keyboard）
+- 広範囲の一括リファクタは分割。理由と最小差分を明示。
+
+## Git
+- 生成物のコミット禁止。`.gitignore` を尊重。
+- `.env*` を VCS に入れない。
+
+## Security
+- 秘密のハードコード禁止。見つけたら作業中断して確認を求める。
+
+## When in doubt
+- 変更理由を説明し、最小の diff を提示して承認を待つ。
