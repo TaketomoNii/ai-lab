@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+set -e
+
+# husky.sh があれば読み込む（無くても続行）
+if [ -f "$(dirname -- "$0")/_/husky.sh" ]; then
+  . "$(dirname -- "$0")/_/husky.sh"
+fi
+
+# apps/web でフォーマット（失敗しても続行）
+npm -C "$(git rev-parse --show-toplevel)/apps/web" run -s format || true
+
+# ステージ済み TS/TSX に ESLint+Prettier
+npx --yes -C "$(git rev-parse --show-toplevel)/apps/web" lint-staged
