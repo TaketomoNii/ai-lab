@@ -1,48 +1,76 @@
 'use client';
-import React, { useState } from 'react';
+import React from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
+
+const Schema = z.object({
+  email: z
+    .string()
+    .min(1, 'メールアドレスを入力してください。')
+    .email('メールアドレスの形式が正しくありません。'),
+  password: z.string().min(8, '8文字以上で入力してください。'),
+  remember: z.boolean().optional(),
+});
+type FormValues = z.infer<typeof Schema>;
 
 export default function LoginForm() {
-  const [email, setEmail] = useState('');
-  const [pw, setPw] = useState('');
-  const [showPw, setShowPw] = useState(false);
-  const [remember, setRemember] = useState(false);
-  const [errors, setErrors] = useState<{ email?: string; pw?: string }>({});
-  const [submitting, setSubmitting] = useState(false);
+  const router = useRouter();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+    setFocus,
+  } = useForm<FormValues>({
+    resolver: zodResolver(Schema),
+    defaultValues: { email: '', password: '', remember: false },
+    mode: 'onBlur',
+  });
 
-  const validate = () => {
-    const next: typeof errors = {};
-    if (!email.trim()) next.email = 'メールアドレスを入力してください。';
-    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
-      next.email = 'メールアドレスの形式が正しくありません。';
-    if (!pw) next.pw = 'パスワードを入力してください。';
-    else if (pw.length < 8) next.pw = '8文字以上で入力してください。';
-    setErrors(next);
-    return Object.keys(next).length === 0;
+  const onSubmit = async () => {
+    // 実装時は実API/NextAuthのCredentialsなどに置換
+    await new Promise((r) => setTimeout(r, 400));
+    router.push('/protected');
   };
 
-  const onSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!validate()) return;
-    try {
-      setSubmitting(true);
-      await new Promise((r) => setTimeout(r, 400)); // ← 実装時にAPIへ置換
-      window.location.href = '/protected';
-    } finally {
-      setSubmitting(false);
-    }
+  const onError = (errs: typeof errors) => {
+    const keys = Object.keys(errs) as Array<keyof FormValues>;
+    if (keys.length) setFocus(keys[0]);
   };
 
   return (
     <div className="w-full max-w-sm space-y-4">
-      {/* --- GitHub でログイン（Link使用） --- */}
+      {/* GitHub 公式風ボタン（光学中心を保つ 3カラム） */}
       <Link
-        href="/api/auth/signin?provider=github"
-        className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-black px-4 py-2 font-medium text-white shadow-sm transition hover:bg-neutral-800 focus:outline-none focus:ring-2 focus:ring-black/20"
+        href="/api/auth/signin?provider=github&callbackUrl=/protected"
+        className="grid w-full grid-cols-[1.25rem,1fr,1.25rem] items-center rounded-lg bg-[#24292F] px-4 py-2 font-medium text-white shadow-sm transition hover:bg-[#1F2328] focus:outline-none focus:ring-2 focus:ring-[#24292F]/30"
         aria-label="GitHubでログイン"
         prefetch={false}
       >
-        🐙 GitHubでログイン
+        <span aria-hidden className="block h-5 w-5 justify-self-start">
+          <svg
+            viewBox="0 0 16 16"
+            width="20"
+            height="20"
+            aria-hidden="true"
+            className="fill-current"
+          >
+            <path
+              d="M8 0C3.58 0 0 3.58 0 8a8 8 0 0 0 5.47 7.59c.4.07.55-.17.55-.38
+            0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52
+            -.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95
+            0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27
+            1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95
+            .29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8 8 0 0 0 16 8c0-4.42-3.58-8-8-8z"
+            />
+          </svg>
+        </span>
+        <span className="justify-self-center">Sign in with GitHub</span>
+        <span aria-hidden className="block h-5 w-5 justify-self-end opacity-0">
+          <svg width="20" height="20" />
+        </span>
       </Link>
 
       <div className="relative my-3 text-center text-xs text-white/80">
@@ -50,11 +78,12 @@ export default function LoginForm() {
         <div className="absolute left-0 top-1/2 h-px w-full -translate-y-1/2 bg-white/20" />
       </div>
 
-      {/* --- メール＋パスワード --- */}
+      {/* E-mail / Password フォーム（Zod + RHF） */}
       <form
-        onSubmit={onSubmit}
         noValidate
-        className="space-y-4 rounded-2xl border border-white/30 backdrop-blur bg-white/95 p-6 shadow-md backdrop-blur"
+        onSubmit={handleSubmit(onSubmit, onError)}
+        className="space-y-4 rounded-2xl border border-white/40 bg-white/95 p-6 shadow-md backdrop-blur"
+        aria-describedby={Object.keys(errors).length ? 'form-errors' : undefined}
       >
         <div className="space-y-1">
           <label htmlFor="email" className="block text-sm font-medium text-slate-800">
@@ -62,13 +91,9 @@ export default function LoginForm() {
           </label>
           <input
             id="email"
-            name="email"
             type="email"
-            inputMode="email"
             autoComplete="email"
-            required
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            {...register('email')}
             aria-invalid={!!errors.email}
             aria-describedby={errors.email ? 'email-error' : undefined}
             className="block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900 shadow-sm outline-none ring-0 focus:border-slate-400 focus:ring-2 focus:ring-slate-200"
@@ -76,7 +101,7 @@ export default function LoginForm() {
           />
           {errors.email && (
             <p id="email-error" className="text-sm text-red-600">
-              {errors.email}
+              {errors.email.message}
             </p>
           )}
         </div>
@@ -87,30 +112,17 @@ export default function LoginForm() {
           </label>
           <input
             id="password"
-            name="password"
-            type={showPw ? 'text' : 'password'}
+            type="password"
             autoComplete="current-password"
-            required
-            value={pw}
-            onChange={(e) => setPw(e.target.value)}
-            aria-invalid={!!errors.pw}
-            aria-describedby={errors.pw ? 'pw-error' : undefined}
+            {...register('password')}
+            aria-invalid={!!errors.password}
+            aria-describedby={errors.password ? 'pw-error' : undefined}
             className="block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900 shadow-sm outline-none ring-0 focus:border-slate-400 focus:ring-2 focus:ring-slate-200"
             placeholder="••••••••"
           />
-          <div className="text-right">
-            <button
-              type="button"
-              onClick={() => setShowPw((prev) => !prev)}
-              className="text-xs text-slate-600 underline underline-offset-2 hover:text-slate-800"
-              aria-pressed={showPw}
-            >
-              パスワードを表示/非表示
-            </button>
-          </div>
-          {errors.pw && (
+          {errors.password && (
             <p id="pw-error" className="text-sm text-red-600">
-              {errors.pw}
+              {errors.password.message}
             </p>
           )}
         </div>
@@ -119,10 +131,8 @@ export default function LoginForm() {
           <label className="inline-flex items-center gap-2 text-sm text-slate-800">
             <input
               id="remember"
-              name="remember"
               type="checkbox"
-              checked={remember}
-              onChange={(e) => setRemember(e.target.checked)}
+              {...register('remember')}
               className="h-4 w-4 rounded border-slate-300 text-slate-800 focus:ring-slate-200"
             />
             ログイン状態を保持
@@ -137,12 +147,18 @@ export default function LoginForm() {
 
         <button
           type="submit"
-          disabled={submitting}
+          disabled={isSubmitting}
           className="inline-flex w-full items-center justify-center rounded-lg bg-blue-600 px-4 py-2 font-medium text-white shadow-sm transition disabled:opacity-50 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-200"
-          aria-busy={submitting}
+          aria-busy={isSubmitting}
         >
-          {submitting ? '送信中…' : 'ログイン'}
+          {isSubmitting ? '送信中…' : 'ログイン'}
         </button>
+
+        {Object.keys(errors).length > 0 && (
+          <p id="form-errors" className="sr-only" aria-live="polite">
+            入力エラーがあります。各入力欄の直後に説明があります。
+          </p>
+        )}
       </form>
     </div>
   );
