@@ -1,21 +1,16 @@
-"use client";
-import { signIn } from "next-auth/react";
-import { useSearchParams } from "next/navigation";
+import { devLoginEnabled } from "@/lib/auth";
+import LoginButtons from "./LoginButtons";
 
-export default function Login() {
-  const params = useSearchParams();
-  const err = params.get("error");
+export default async function Login({ searchParams }: { searchParams: Promise<{ error?: string; callbackUrl?: string }> }) {
+  const { error, callbackUrl } = await searchParams;
+  // 外部サイトへのリダイレクトを防ぐため、相対パスのみ受け付ける
+  const safeCallback = callbackUrl?.startsWith("/") && !callbackUrl.startsWith("//") ? callbackUrl : "/decks";
   return (
-    <main className="min-h-screen grid place-items-center">
-      <div className="p-8 rounded-xl shadow w-full max-w-sm border space-y-4">
-        <h1 className="text-xl font-semibold">Sign in</h1>
-        {err && <div className="text-sm text-red-600">Error: {err}</div>}
-        <button
-          className="w-full p-3 rounded border"
-          onClick={() => signIn("github", { callbackUrl: "/protected" })}
-        >
-          Continue with GitHub
-        </button>
+    <main className="grid min-h-[70vh] place-items-center px-4">
+      <div className="w-full max-w-sm space-y-4 rounded-xl border p-8 shadow">
+        <h1 className="text-xl font-semibold">ログイン</h1>
+        {error && <div className="text-sm text-red-600">ログインできませんでした（{error}）</div>}
+        <LoginButtons callbackUrl={safeCallback} devLogin={devLoginEnabled} />
       </div>
     </main>
   );

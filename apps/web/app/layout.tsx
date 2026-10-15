@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
+import "./globals.css";
 import Providers from "./providers";
 import Nav from "./components/Nav";
 
-export const metadata: Metadata = { title: "ASJ AI Lab", description: "AI-driven dev sandbox" };
+export const metadata: Metadata = { title: "Slidea", description: "講義・プレゼン資料のナレッジシステム" };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (

@@ -16,6 +16,7 @@ import { LOCALSTORAGE_KEY_DISCARDED_DB } from '@/configs/storage'
 import { deleteDiscardedDB } from '@/utils/database'
 import { isPC } from '@/utils/common'
 import api from '@/services'
+import { deckId, loadDeck, startAutoSave, DECKS_URL } from '@/slidea/deckSync'
 
 import Editor from './views/Editor/index.vue'
 import Screen from './views/Screen/index.vue'
@@ -34,9 +35,7 @@ const { screening } = storeToRefs(screenStore)
 
 const isAudienceMode = new URLSearchParams(window.location.search).get('mode') === 'audience'
 
-if (import.meta.env.MODE !== 'development') {
-  window.onbeforeunload = () => false
-}
+// Slidea: 離脱時の確認は未保存の変更がある場合のみ行う（@/slidea/deckSync）
 
 onMounted(async () => {
   if (isAudienceMode) {
@@ -47,11 +46,22 @@ onMounted(async () => {
     screenStore.setScreening(true)
   }
   else {
-    const slides = await api.getMockData('slides')
-    slidesStore.setSlides(slides)
+    // Slidea: ?deck=<id> の資料を読み込む。指定がない場合、開発時はサンプル、本番は資料一覧へ
+    if (deckId) {
+      if (!await loadDeck(deckId)) return
+    }
+    else if (import.meta.env.MODE === 'development') {
+      const slides = await api.getMockData('slides')
+      slidesStore.setSlides(slides)
+    }
+    else {
+      window.location.href = DECKS_URL
+      return
+    }
 
     await deleteDiscardedDB()
     snapshotStore.initSnapshotDatabase()
+    startAutoSave()
   }
 })
 

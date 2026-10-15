@@ -8,8 +8,21 @@ import Components from 'unplugin-vue-components/vite'
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  base: '',
+  // Slidea: apps/web の /editor 配下で配信する
+  base: '/editor/',
   plugins: [
+    // Slidea: apps/web（Next.js）経由で開発サーバーにアクセスすると、
+    // `?vue&type=style&lang.scss` のような値なしクエリが `lang.scss=` に書き換えられ、
+    // Vite が CSS として処理できなくなる。値なしに戻してから Vite に渡す。
+    {
+      name: 'slidea-normalize-proxied-query',
+      configureServer(server) {
+        server.middlewares.use((req, _res, next) => {
+          if (req.url?.includes('?')) req.url = req.url.replace(/([?&][^=&]+)=(?=&|$)/g, '$1')
+          next()
+        })
+      },
+    },
     vue(),
     Components({
       dirs: [],
@@ -33,13 +46,15 @@ export default defineConfig({
   server: {
     host: '127.0.0.1',
     port: 5173,
+    strictPort: true,
+    // Slidea: 通常は apps/web（http://localhost:3000/editor）経由で開く。
+    // Vite を直接開いた場合も API を使えるよう apps/web へ転送する
     proxy: {
       '/api': {
-        target: 'https://server.pptist.cn',
-        changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api/, ''),
-      }
-    }
+        target: process.env.SLIDEA_WEB_URL ?? 'http://localhost:3000',
+        changeOrigin: false,
+      },
+    },
   },
   css: {
     preprocessorOptions: {

@@ -1,10 +1,15 @@
 <template>
   <div class="editor-header">
     <div class="left">
+      <!-- Slidea: 資料一覧へ戻る -->
+      <a class="slidea-back" :href="DECKS_URL" v-tooltip="'資料一覧へ'">
+        <div class="menu-item"><i-icon-park-outline:left class="icon" /></div>
+      </a>
       <Popover trigger="click" placement="bottom-start" v-model:value="mainMenuVisible">
         <template #content>
           <div class="main-menu">
-            <div class="ai-menu" @click="openAIPPTDialog(); mainMenuVisible = false">
+            <!-- Slidea: AI 機能は Claude 連携で置き換えるまで非表示 -->
+            <div class="ai-menu" v-if="SHOW_PPTIST_AI" @click="openAIPPTDialog(); mainMenuVisible = false">
               <div class="icon"><i-custom:click /></div>
               <div class="aippt-content">
                 <div class="aippt"><span>AIPPT</span></div>
@@ -12,7 +17,7 @@
               </div>
             </div>
           </div>
-          <Divider :margin="10" />
+          <Divider :margin="10" v-if="SHOW_PPTIST_AI" />
           <div class="import-section">
             <div class="import-label">导入文件</div>
             <div class="import-grid">
@@ -50,8 +55,6 @@
           <PopoverMenuItem class="popover-menu-item" @click="mainMenuVisible = false; hotkeyDrawerVisible = true"><i-icon-park-outline:command class="icon" /> 快捷操作</PopoverMenuItem>
           <PopoverMenuItem class="popover-menu-item" @click="goLink('https://github.com/pipipi-pikachu/PPTist/issues')"><i-icon-park-outline:comment class="icon" /> 意见反馈</PopoverMenuItem>
           <PopoverMenuItem class="popover-menu-item" @click="goLink('https://github.com/pipipi-pikachu/PPTist/blob/master/doc/Q&A.md')"><i-icon-park-outline:helpcenter class="icon" /> 常见问题</PopoverMenuItem>
-          <Divider :margin="10" />
-          <div class="statement">注：本站仅作测试/演示，不提供任何形式的服务</div>
         </template>
         <div class="menu-item"><i-icon-park-outline:hamburger-button class="icon" /></div>
       </Popover>
@@ -71,6 +74,7 @@
           v-else
         >{{ title }}</div>
       </div>
+      <SaveStatus v-if="deckId" />
     </div>
 
     <div class="right">
@@ -86,7 +90,7 @@
           <div class="arrow-btn"><i-icon-park-outline:down class="arrow" /></div>
         </Popover>
       </div>
-      <div class="menu-item" v-tooltip="'AI生成PPT'" @click="openAIPPTDialog(); mainMenuVisible = false">
+      <div class="menu-item" v-if="SHOW_PPTIST_AI" v-tooltip="'AI生成PPT'" @click="openAIPPTDialog(); mainMenuVisible = false">
         <span class="text ai">AI</span>
       </div>
       <div class="menu-item" v-tooltip="'导出'" @click="setDialogForExport('pptx')">
@@ -127,6 +131,10 @@ import Input from '@/components/Input.vue'
 import Popover from '@/components/Popover.vue'
 import PopoverMenuItem from '@/components/PopoverMenuItem.vue'
 import Divider from '@/components/Divider.vue'
+import SaveStatus from '@/slidea/SaveStatus.vue'
+import { deckId, DECKS_URL } from '@/slidea/deckSync'
+
+const SHOW_PPTIST_AI = false
 
 const mainStore = useMainStore()
 const slidesStore = useSlidesStore()
@@ -330,6 +338,9 @@ const openAIPPTDialog = () => {
     align-items: center;
     cursor: pointer;
   }
+}
+.slidea-back {
+  color: inherit;
 }
 .title {
   height: 30px;

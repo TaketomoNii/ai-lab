@@ -1,23 +1,16 @@
-"use client";
-import { useSession, signOut } from "next-auth/react";
 import Link from "next/link";
+import { getSession } from "@/lib/auth";
 
-export default function Home() {
-  const { data: session } = useSession();
+export default async function Home() {
+  const session = await getSession();
   return (
-    <main className="p-6 space-y-4">
-      <h1 className="text-2xl font-bold">ASJ AI Lab</h1>
+    <main className="mx-auto max-w-5xl space-y-4 px-4 py-10">
+      <h1 className="text-3xl font-bold">Slidea</h1>
+      <p className="text-gray-600">講義・プレゼン資料を作り、蓄積し、再利用するためのナレッジシステム。</p>
       {session ? (
-        <div className="space-y-2">
-          <p>Signed in as {session.user?.email}</p>
-          <button className="border rounded px-3 py-2" onClick={() => signOut()}>Sign out</button>
-          <div><Link className="underline" href="/protected">Go to protected page</Link></div>
-        </div>
+        <Link className="inline-block rounded bg-black px-4 py-2 text-white" href="/decks">資料一覧へ</Link>
       ) : (
-        <div className="space-y-2">
-          <p>You are not signed in.</p>
-          <Link className="underline" href="/login">Sign in</Link>
-        </div>
+        <Link className="inline-block rounded bg-black px-4 py-2 text-white" href="/login">ログイン</Link>
       )}
     </main>
   );

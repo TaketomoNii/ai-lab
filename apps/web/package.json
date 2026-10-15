@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "eslint",
     "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
+    "build-storybook": "storybook build",
+    "test:unit": "vitest run -c vitest.unit.config.ts"
   },
   "dependencies": {
     "@auth/core": "^0.34.3",

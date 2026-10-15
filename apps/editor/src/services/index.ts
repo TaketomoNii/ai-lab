@@ -1,8 +1,9 @@
 import axios from './axios'
 import fetchRequest from './fetch'
 
-// export const SERVER_URL = 'http://localhost:5000'
-export const SERVER_URL = (import.meta.env.MODE === 'development') ? '/api' : 'https://server.pptist.cn'
+// Slidea: PPTist 公式サーバー（server.pptist.cn）には送信しない。
+// AI 生成・画像検索は Slidea 側の API（Claude 連携）で置き換える予定のため、現時点では無効。
+export const SERVER_URL = '/api/pptist-tools'
 
 interface ImageSearchPayload {
   query: string;

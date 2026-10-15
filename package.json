@@ -1,0 +1,12 @@
+{
+  "name": "slidea",
+  "private": true,
+  "scripts": {
+    "setup": "npm --prefix apps/web install && npm --prefix apps/editor install",
+    "dev": "node scripts/dev.mjs",
+    "build": "npm --prefix apps/editor run build:web && npm --prefix apps/web run build",
+    "start": "npm --prefix apps/web run start",
+    "typecheck": "cd apps/web && npx tsc --noEmit && cd ../editor && npm run type-check",
+    "test": "npm --prefix apps/web run test:unit"
+  }
+}

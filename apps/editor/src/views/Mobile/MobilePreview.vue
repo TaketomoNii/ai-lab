@@ -14,7 +14,7 @@
       <Divider type="vertical" style="height: 30px;" />
       <div class="menu-item" @click="changeMode('player')"><i-icon-park-outline:full-screen-play class="icon" /> 播放</div>
       <Divider type="vertical" style="height: 30px;" />
-      <div class="menu-item ai" @click="openAIPPTDialog()">AIPPT</div>
+      <!-- Slidea: AI 機能は Claude 連携で置き換えるまで非表示 -->
     </div>
   </div>
 
@@ -52,7 +52,6 @@ const { slidesLoadLimit } = useLoadSlides()
 const mainStore = useMainStore()
 const { showAIPPTDialog } = storeToRefs(mainStore)
 
-const openAIPPTDialog = () => mainStore.setAIPPTDialogState(true)
 const closeAIPPTDialog = () => mainStore.setAIPPTDialogState(false)
 
 const mobileRef = useTemplateRef<HTMLElement>('mobileRef')
